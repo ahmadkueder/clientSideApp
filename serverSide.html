@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<script>var $   = require("jquery");  jQuery = require("jquery"); </script>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Insert Server Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
+</head>
+
+<body>
+    <div class="ui segments">
+        <div class="ui segment ">
+            <div class="ui form">
+                <div class="fields">
+
+                    <div class="field">
+                        <label for="">IP</label>
+                        <input maxlength="15" type="text" needed id="server_ip">
+                    </div>
+
+                    <div class="two wide field ">
+                        <label for="">PORT</label>
+                        <input maxlength="5" type="number" id="port" needed>
+                    </div>
+
+
+                    <div class="ui segment">
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" id="https" name="gift" tabindex="0" class="hidden" needed>
+                                <label>Is this HTTPS request ? </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="field">
+                    <label for="">Dir of the file</label>
+                    <input type="text" name="" id="folder" value="/" needed>
+                </div>
+
+                <div class="ui divider"></div>
+                <div class="ui fields">
+                    <div class="field">
+                        <div class="ui button blue bottom attached" id="submitButton">
+                            Submit
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+<script>
+    $(`.checkbox`).checkbox();
+    // check if if is entered 
+    try {
+        const {
+            ipcRenderer
+        } = require('electron')
+        var to_send = {};
+        $(`#submitButton`).click(function (event) {
+
+            $(`[needed]`).each(function (index, element) {
+                if ($(element).val() === "" && element.type !== "checkbox") {
+
+                } else {
+                    element.type === "checkbox" ?
+                        to_send[$(element).attr("id")] = $(element).is(":checked") :
+                        to_send[$(element).attr("id")] = $(element).val();
+                }
+            })
+            if (Object.keys(to_send).length < $(`[needed]`).length) {
+                alert("FIELD filld");
+            } else {
+                console.log(to_send)
+                ipcRenderer.send("save_to_json_file_server_data", to_send);
+            }
+
+        });
+
+    } catch (error) {
+        $(`#msg`).text(error);
+        alert(error);
+    }
+</script>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0;
+        /* <-- Apparently some margin are still there even though it's hidden */
+    }
+</style>
+
+</html>
